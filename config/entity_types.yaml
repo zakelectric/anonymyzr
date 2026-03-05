@@ -1,0 +1,47 @@
+# anonymyzr entity detection configuration
+#
+# Add or remove labels to control what gets anonymized.
+# Labels are plain English — GLiNER understands natural language descriptions.
+# Lower threshold = more aggressive detection (more false positives).
+# Higher threshold = more conservative (may miss some entities).
+
+threshold: 0.5
+
+entity_types:
+  # People
+  - person name
+  - date of birth
+
+  # Organizations
+  - company name
+  - organization name
+
+  # Contact & location
+  - address
+  - email address
+  - phone number
+  - url
+
+  # Financial
+  - dollar amount
+  - bank account number
+  - credit card number
+  - routing number
+
+  # Government IDs
+  - social security number
+  - passport number
+  - driver's license number
+
+  # Medical
+  - medical record number
+  - patient id
+
+  # Corporate
+  - employee id
+
+  # Network
+  - ip address
+
+  # Dates (be careful — may be too aggressive for non-sensitive dates)
+  # - date
