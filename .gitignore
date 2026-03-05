@@ -1,0 +1,12 @@
+# Environment
+.env
+
+# Logs contain real PII — never commit
+logs/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/

@@ -17,6 +17,7 @@ from typing import Optional
 
 from faker import Faker
 
+from .log import log_entity
 from .mapper import mapper
 
 fake = Faker()
@@ -40,6 +41,7 @@ def synthesize(session_id: str, real_value: str, entity_label: str) -> str:
         attempts += 1
 
     mapper.store(session_id, real_value, synthetic)
+    log_entity(session_id, entity_label, real_value, synthetic)
     return synthetic
 
 

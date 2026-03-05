@@ -27,6 +27,7 @@ from fastapi.responses import JSONResponse, StreamingResponse
 
 from .deanonymizer import deanonymize, deanonymize_content_blocks
 from .detector import detect_entities
+from .log import log_error, log_request, log_response
 from .mapper import mapper
 from .synthesizer import synthesize
 
@@ -111,6 +112,8 @@ async def proxy_messages(request: Request):
     body = await request.json()
     wants_stream = body.get("stream", False)
 
+    log_request(session_id, body.get("model", "unknown"), len(body.get("messages", [])))
+
     # --- Anonymize request ---
     if "messages" in body:
         body["messages"] = _anonymize_messages(session_id, body["messages"])
@@ -138,6 +141,7 @@ async def proxy_messages(request: Request):
         resp = await client.post(CLAUDE_API_URL, json=body, headers=forward_headers)
 
     if resp.status_code != 200:
+        log_error(session_id, f"Claude returned {resp.status_code}")
         return JSONResponse(status_code=resp.status_code, content=resp.json())
 
     response_data = resp.json()
@@ -145,6 +149,8 @@ async def proxy_messages(request: Request):
     # --- Deanonymize response ---
     if "content" in response_data:
         response_data["content"] = deanonymize_content_blocks(session_id, response_data["content"])
+        swaps = len(mapper.get_all_synthetic_to_real(session_id))
+        log_response(session_id, response_data.get("stop_reason", "unknown"), swaps)
 
     response_headers = {"x-anonymyzr-session": session_id}
 
