@@ -147,10 +147,10 @@ async def proxy_messages(request: Request):
     response_data = resp.json()
 
     # --- Deanonymize response ---
+    swaps = 0
     if "content" in response_data:
-        response_data["content"] = deanonymize_content_blocks(session_id, response_data["content"])
-        swaps = len(mapper.get_all_synthetic_to_real(session_id))
-        log_response(session_id, response_data.get("stop_reason", "unknown"), swaps)
+        response_data["content"], swaps = deanonymize_content_blocks(session_id, response_data["content"])
+    log_response(session_id, response_data.get("stop_reason", "unknown"), swaps)
 
     response_headers = {"x-anonymyzr-session": session_id}
 
